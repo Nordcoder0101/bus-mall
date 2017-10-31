@@ -69,20 +69,39 @@ function assignPhotoToFrame(){
 
 
 
-//This will switch the box from not clicked to clicked/
+//This will switch the box from not clicked to clicked and tally +1 for its clicked counter*//
 function ImgClicked(){
-  for(var i = 0; i < theFrames.lenth; i++) {
-    theFrames[i].onclick = function() {
-  .isClicked = true
-    }
-
+  for(var i = 0; busMallInv.length; i++) {
+    if (busMallInv[i].picAddress === theFrames[0]){
+      busMallInv[i].amountClicked ++;
+      assignPhotoToFrame();
+    } else if (busMallInv[i].picAddress === theFrames[1]) {
+      busMallInv[i].amountClicked ++;
+      assignPhotoToFrame();
+    } else {
+      busMallInv[i].amountClicked ++;
+      assignPhotoToFrame();
     }
   }
-  }
-
+}
+//   if(theFrames[0].onclick) {
+//     busMallInv[randomThreeNumbers].isClicked = true;
+//     busMallInv[randomThreeNumbers].amountClicked ++;
+//     console.log(busMallInv[randomThreeNumbers]);
+//   } else if (theFrames[1].onclick) {
+//   } else {
+//     busMallInv[randomThreeNumbers].isClicked = true;
+//     busMallInv[randomThreeNumbers].amountClicked ++;
+//   }
+//   console.log(busMallInv[randomThreeNumbers]);
+//   assignPhotoToFrame();
+// };
 
 assignPhotoToFrame();
+console.log(randomThreeNumbers, ' are my random 3 in global form');
 
 
 
-theFrames.addEventListener('click', ImgClicked);
+
+
+theFrames[0,1,2].addEventListener('click', ImgClicked);

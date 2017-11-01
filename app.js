@@ -1,10 +1,13 @@
 'use strict';
 
-var theFrames = [document.getElementById('frame_one'), document.getElementById('frame_two'), document.getElementById('frame_three')];
+var frameOne = document.getElementById('frame_one');
+var frameTwo = document.getElementById('frame_two');
+var frameThree = document.getElementById('frame_three');
+var theFrames = [frameOne, frameTwo, frameThree];
 
 var randomThreeNumbers = [];
 var counterToEnd = 0;
-
+var isShown = false;
 
 function Products(item, picAddress){
   this.item = item;
@@ -12,6 +15,7 @@ function Products(item, picAddress){
   this.amountClicked = 0;
   this.amountShown = 0;
   this.isClicked = false;
+  this.shownLast = false;
 }
 
 var bag = new Products('bag', 'assets/bag.jpg');
@@ -45,7 +49,7 @@ function rng() {
 function findThreeItems(){ //This is to find 3 random number*//
   for(var i = 0; i < theFrames.length; i++){
     randomThreeNumbers[i] = rng();
-    console.log(randomThreeNumbers[i]);
+    console.log('my three random numbers are ', randomThreeNumbers[i]);
   }
   while(randomThreeNumbers[0] === randomThreeNumbers[1] || randomThreeNumbers[0] === randomThreeNumbers[2] || randomThreeNumbers[1] === randomThreeNumbers[2]) {
     randomThreeNumbers[0] = rng();
@@ -59,31 +63,22 @@ function findThreeItems(){ //This is to find 3 random number*//
 //This is to assign the photos to the three frames *//
 function assignPhotoToFrame(){
   findThreeItems();
-  for(var i = 0; i < theFrames.length; i++){
+  for(var i = 0; i < randomThreeNumbers.length; i++){
     theFrames[i].src = busMallInv[randomThreeNumbers[i]].picAddress;
+    console.log(busMallInv, ' my objects should have shownLast as true, and a tally on times shown');
     busMallInv[randomThreeNumbers[i]].amountShown ++;
-    console.log(busMallInv[randomThreeNumbers[i]].amountShown);
+    busMallInv[randomThreeNumbers[i]].shownLast = true;
   }
 }
-
-
-
 
 //This will switch the box from not clicked to clicked and tally +1 for its clicked counter*//
-function ImgClicked(){
-  for(var i = 0; busMallInv.length; i++) {
-    if (busMallInv[i].picAddress === theFrames[0]){
-      busMallInv[i].amountClicked ++;
-      assignPhotoToFrame();
-    } else if (busMallInv[i].picAddress === theFrames[1]) {
-      busMallInv[i].amountClicked ++;
-      assignPhotoToFrame();
-    } else {
-      busMallInv[i].amountClicked ++;
-      assignPhotoToFrame();
-    }
-  }
+function imgClicked(frameClicked) {
+  console.log(frameClicked, ' frame was clicked');
+  busMallInv[randomThreeNumbers[frameClicked]].amountClicked ++;
+  console.log(busMallInv[randomThreeNumbers[frameClicked]].amountClicked, 'should increment amount of clicks');
+  assignPhotoToFrame();
 }
+
 //   if(theFrames[0].onclick) {
 //     busMallInv[randomThreeNumbers].isClicked = true;
 //     busMallInv[randomThreeNumbers].amountClicked ++;
@@ -102,6 +97,12 @@ console.log(randomThreeNumbers, ' are my random 3 in global form');
 
 
 
-
-
-theFrames[0,1,2].addEventListener('click', ImgClicked);
+frameOne.addEventListener('click', function() {
+  imgClicked(0);
+});
+frameTwo.addEventListener('click', function() {
+imgClicked(1);
+});
+frameThree.addEventListener('click', function() {
+  imgClicked(2);
+});

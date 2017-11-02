@@ -5,17 +5,17 @@ var frameTwo = document.getElementById('frame_two');
 var frameThree = document.getElementById('frame_three');
 var theFrames = [frameOne, frameTwo, frameThree];
 
+
 var randomThreeNumbers = [];
+var previousThreeNumbers = [];
 var counterToEnd = 0;
-var isShown = false;
+
 
 function Products(item, picAddress){
   this.item = item;
   this.picAddress = picAddress;
   this.amountClicked = 0;
   this.amountShown = 0;
-  this.isClicked = false;
-  this.shownLast = false;
 }
 
 var bag = new Products('bag', 'assets/bag.jpg');
@@ -41,6 +41,30 @@ var wineGlass = new Products('pet sweeper', 'assets/wine-glass.jpg');
 
 var busMallInv = [bag, banana, bathroom, boots, breakfast, bubbleGum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, babySweep, tauntaun, unicorn, usb, waterCan, wineGlass]; //This will be my array of objects containing item info*//
 
+
+function loadChart() {
+
+  var chart = new CanvasJS.Chart('total_amount_clicked', {
+    animationEnabled: true,
+    theme: 'dark1',
+    title:{
+      text: 'Amount of clicks per product'
+    },
+    axisY: {
+      title: 'Clicks'
+    },
+    data: [{
+      type: 'column',
+      showInLegend: true,
+      legendMarkerColor: 'grey',
+      legendText: '',
+      dataPoints: []
+    }]
+  });
+  chart.render();
+
+};
+
 function rng() {
   return Math.floor(Math.random() * (20));
 };
@@ -48,37 +72,54 @@ function rng() {
 
 function findThreeItems(){ //This is to find 3 random number*//
   for(var i = 0; i < theFrames.length; i++){
-    randomThreeNumbers[i] = rng();
-    console.log('my three random numbers are ', randomThreeNumbers[i]);
+    var newNumber = rng();
+    while (isInArray(newNumber, previousThreeNumbers)) {
+      newNumber = rng();
+    }
+    randomThreeNumbers[i] = newNumber;
+    previousThreeNumbers.push(newNumber);
   }
-  while(randomThreeNumbers[0] === randomThreeNumbers[1] || randomThreeNumbers[0] === randomThreeNumbers[2] || randomThreeNumbers[1] === randomThreeNumbers[2]) {
-    randomThreeNumbers[0] = rng();
-    console.log('new value of first is', randomThreeNumbers[0]);
-    randomThreeNumbers[1] = rng();
-    console.log('new vaule of second is', randomThreeNumbers[1]);
+  if (previousThreeNumbers.length > theFrames.length) {
+    previousThreeNumbers.splice(0, theFrames.length);
   }
+  return randomThreeNumbers;
+}
+while(randomThreeNumbers[0] === randomThreeNumbers[1] || randomThreeNumbers[0] === randomThreeNumbers[2] || randomThreeNumbers[1] === randomThreeNumbers[2]) {
+  randomThreeNumbers[0] = rng();
+  console.log('new value of first is', randomThreeNumbers[0]);
+  randomThreeNumbers[1] = rng();
+  console.log('new vaule of second is', randomThreeNumbers[1]);
 }
 
+function isInArray(needle, hayStackArray) {
+  for (var i = 0; i < hayStackArray.length; i++) {
+    if (hayStackArray[i] == needle) {
+      return true;
+    }
+  }
+  return false;
+}
 
 //This is to assign the photos to the three frames *//
 function assignPhotoToFrame(){
   findThreeItems();
   for(var i = 0; i < randomThreeNumbers.length; i++){
     theFrames[i].src = busMallInv[randomThreeNumbers[i]].picAddress;
-    console.log(busMallInv, ' my objects should have shownLast as true, and a tally on times shown');
     busMallInv[randomThreeNumbers[i]].amountShown ++;
-    busMallInv[randomThreeNumbers[i]].shownLast = true;
   }
 }
 
 //This will switch the box from not clicked to clicked and tally +1 for its clicked counter*//
 function imgClicked(frameClicked) {
-  console.log(frameClicked, ' frame was clicked');
-  busMallInv[randomThreeNumbers[frameClicked]].amountClicked ++;
-  console.log(busMallInv[randomThreeNumbers[frameClicked]].amountClicked, 'should increment amount of clicks');
-  assignPhotoToFrame();
+  counterToEnd ++;
+  if (counterToEnd < 26) {
+    busMallInv[randomThreeNumbers[frameClicked]].amountClicked ++;
+    console.log(busMallInv[randomThreeNumbers[frameClicked]].amountClicked, 'should increment amount of clicks');
+    assignPhotoToFrame();
+  }
+  insertDataIntoChart();
+  loadChart();
 }
-
 //   if(theFrames[0].onclick) {
 //     busMallInv[randomThreeNumbers].isClicked = true;
 //     busMallInv[randomThreeNumbers].amountClicked ++;
@@ -95,14 +136,23 @@ function imgClicked(frameClicked) {
 assignPhotoToFrame();
 console.log(randomThreeNumbers, ' are my random 3 in global form');
 
+function insertDataIntoChart() {
+  for(var i = 0; i < busMallInv[i]; i++) {
+    chart.data[0].dataPoints[i].y = busMallInv[i].amountClicked;
+    console.log(chart.data[0].dataPoints[i].y, 'is my amount clicked for the graph');
+    chart.data[0].dataPoints[i].label = busMallInv[i].item;
+  }
+}
+
 
 
 frameOne.addEventListener('click', function() {
   imgClicked(0);
 });
 frameTwo.addEventListener('click', function() {
-imgClicked(1);
+  imgClicked(1);
 });
 frameThree.addEventListener('click', function() {
   imgClicked(2);
 });
+console.log(busMallInv);
